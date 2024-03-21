@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 #include "../include/Game.hpp"
 #include <iostream>
 int main(int argc, char* argv[]) {

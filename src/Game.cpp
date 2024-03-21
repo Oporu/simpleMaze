@@ -56,7 +56,7 @@ void Game::initializeMaze(const sf::Vector2i& startPosition) {
 	maze[exitPos.y][exitPos.x] = MazeBlock::EXIT;
 
 	std::uniform_int_distribution distWall(0, 10);
-	std::uniform_int_distribution<sf::Uint8> distWallAlpha(100, 230);
+	std::uniform_int_distribution distBlockAlpha(100, 230);
 	for (int y = 0; y < mazeSize.y; ++y) {
 		for (int x = 0; x < mazeSize.x; ++x) {
 			switch (maze[y][x]) {
@@ -70,7 +70,7 @@ void Game::initializeMaze(const sf::Vector2i& startPosition) {
 					mazeWallColor[y][x] = sf::Color::Green;
 					break;
 			}
-			mazeWallColor[y][x].a = distWallAlpha(randomGen);
+			mazeWallColor[y][x].a = distBlockAlpha(randomGen);
 		}
 	}
 }
