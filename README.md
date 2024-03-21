@@ -1,0 +1,2 @@
+# simpleMaze
+made using SFML
