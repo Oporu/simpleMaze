@@ -2,6 +2,7 @@
 #define SIMPLEMAZE_PLAYER_HPP
 
 #include <SFML/Graphics.hpp>
+#include <array>
 #include "MazeBlock.hpp"
 
 class Player final : public sf::Drawable {

@@ -21,7 +21,7 @@ Game::Game(const int mazeSizeX, int mazeSizeY) :
 
 void Game::initializeWindow() {
     window.setView({{0, 0}, static_cast<sf::Vector2f>(window.getSize())});
-    window.setFramerateLimit(60);
+//    window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
     window.setActive(true);
@@ -117,6 +117,7 @@ void Game::update() {
 		rotation -= dt*100;
 	else if (keyPressed[sf::Keyboard::RBracket])
 		rotation += dt*100;
+	std::cout << 1 / dt << std::endl;
 }
 
 void Game::render() {

@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "MazeBlock.hpp"
 #include <random>
+#include <array>
 class Game final {
 	std::random_device randomDevice;
 	std::mt19937 randomGen{randomDevice()};
