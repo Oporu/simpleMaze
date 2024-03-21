@@ -117,7 +117,6 @@ void Game::update() {
 		rotation -= dt*100;
 	else if (keyPressed[sf::Keyboard::RBracket])
 		rotation += dt*100;
-	std::cout << 1 / dt << std::endl;
 }
 
 void Game::render() {
