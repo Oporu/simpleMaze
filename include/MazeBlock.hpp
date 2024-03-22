@@ -2,7 +2,7 @@
 #define SIMPLEMAZE_MAZEBLOCK_HPP
 
 enum class MazeBlock : sf::Uint8 {
-    WALL, ROAD, EXIT
+	WALL, ROAD, EXIT
 };
 
 

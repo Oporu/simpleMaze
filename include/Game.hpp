@@ -12,14 +12,14 @@ class Game final {
 	sf::RenderWindow window { sf::VideoMode(800, 600), "simpleMaze", sf::Style::Close };
 	sf::Clock clock;
 	sf::Clock timer;
-    Player player;
-    const sf::Vector2i mazeSize;
+	Player player;
+	const sf::Vector2i mazeSize;
 	std::vector<std::vector<MazeBlock>> maze;
 	std::vector<std::vector<sf::Color>> mazeWallColor;
-    std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
+	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
 	float rotation;
-    void initializeMaze(const sf::Vector2i& startPosition);
-    void initializeWindow();
+	void initializeMaze(const sf::Vector2i& startPosition);
+	void initializeWindow();
 	void handleWindowEvents();
 public:
 	explicit Game(int mazeSizeX = 10, int mazeSizeY = 10);
