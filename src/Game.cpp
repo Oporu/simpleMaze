@@ -33,7 +33,7 @@ void Game::initializeMaze(const sf::Vector2i& startPosition) {
 	dfs.push(startPosition);
 
 	while (!dfs.empty()) {
-		const sf::Vector2i& pos = dfs.top(); dfs.pop();
+		const sf::Vector2i pos = dfs.top(); dfs.pop();
 		if (pos.x == 0 || pos.x == mazeSize.x-1 || pos.y == 0 || pos.y == mazeSize.y-1 || maze[pos.y][pos.x] != MazeBlock::WALL) continue;
 		short wallCount = 0;
 		if (maze[pos.y][pos.x+1] == MazeBlock::WALL) ++wallCount;
