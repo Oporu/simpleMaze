@@ -3,6 +3,7 @@
 Player::Player() : shape(30) {
 	shape.setPosition(0, 0);
 	shape.setOrigin(shape.getRadius(), shape.getRadius());
+	shape.setFillColor(sf::Color::Blue);
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {

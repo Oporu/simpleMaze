@@ -15,17 +15,20 @@ class Game final {
 	Player player;
 	const sf::Vector2i mazeSize;
 	std::vector<std::vector<MazeBlock>> maze;
-	std::vector<std::vector<sf::Color>> mazeWallColor;
+	std::vector<std::vector<sf::Color>> mazeBlockColor;
 	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
 	float rotation;
 	void initializeMaze(const sf::Vector2i& startPosition);
 	void initializeWindow();
 	void handleWindowEvents();
+	void renderMazeBlock(int x, int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape);
+	void renderShadowByFace(sf::Vector2f a, sf::Vector2f b, sf::Color color=sf::Color(255,255,255,255));
 public:
 	explicit Game(int mazeSizeX = 10, int mazeSizeY = 10);
 	bool isActive() const;
 	void update();
 	void render();
+
 };
 
 #endif
