@@ -13,7 +13,8 @@ FetchContent_MakeAvailable(SFML)
 add_executable(${PROJECT_NAME} src/main.cpp
 		src/Game.cpp
 		src/player.cpp
-		src/Vignette.cpp)
+		src/Vignette.cpp
+		include/Direction.hpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 

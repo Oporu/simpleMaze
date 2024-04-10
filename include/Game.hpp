@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
 #include "MazeBlock.hpp"
+#include "Direction.hpp"
 #include <random>
 #include <array>
 class Game final {
@@ -15,10 +16,11 @@ class Game final {
 	Player player;
 	const sf::Vector2i mazeSize;
 	std::vector<std::vector<MazeBlock>> maze;
+	sf::Vector2i mazeExit;
 	std::vector<std::vector<sf::Color>> mazeBlockColor;
 	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
 	float rotation;
-	void initializeMaze(const sf::Vector2i& startPosition);
+	void initializeMaze();
 	void initializeWindow();
 	void handleWindowEvents();
 	void renderMazeBlock(int x, int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape);

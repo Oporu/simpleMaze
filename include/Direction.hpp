@@ -1,0 +1,7 @@
+#ifndef SIMPLEMAZE_DIRECTION_HPP
+#define SIMPLEMAZE_DIRECTION_HPP
+
+enum class Direction : int {
+	UP, DOWN, LEFT, RIGHT, SIZE
+};
+#endif //SIMPLEMAZE_DIRECTION_HPP
