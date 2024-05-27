@@ -5,15 +5,12 @@
 #include <stack>
 #include <algorithm>
 #include <iostream>
-Game::Game(const int mazeSizeX, int mazeSizeY) :
+#include <cassert>
+Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
 		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)){
 	initializeWindow();
-//	std::uniform_int_distribution distY(1, mazeSize.y - 2);
-//	std::uniform_int_distribution distX(1, mazeSize.x - 2);
-//	const sf::Vector2i startPosition {distX(randomGen), distY(randomGen) };
-//	player.setPosition(startPosition);
 	initializeMaze();
 	rotation = 0.f;
 	clock.restart();
@@ -29,50 +26,82 @@ void Game::initializeWindow() {
 }
 
 void Game::initializeMaze() {
-	struct tempaaaa : sf::Vector2i {
-		Direction direction;
-	};
+
 	std::uniform_int_distribution distY(0, mazeSize.y - 2);
 	std::uniform_int_distribution distX(0, mazeSize.x - 2);
 	const sf::Vector2i startPosition {distX(randomGen), distY(randomGen)};
 	player.setPosition(startPosition);
-	std::vector<tempaaaa> directions = {{{0, -1}, Direction::UP},
-	                                    {{0, 1}, Direction::DOWN},
-	                                    {{1, 0}, Direction::RIGHT},
-	                                    {{-1, 0}, Direction::LEFT}};
-	std::stack<tempaaaa> dfs;
+	struct tempaaaa : sf::Vector2i {
+		Direction direction; // from
+	};
 	{
+		std::stack<tempaaaa> dfs;
+		std::vector<tempaaaa> directions = {{{0, -1}, Direction::UP},
+		                                    {{0, 1}, Direction::DOWN},
+		                                    {{1, 0}, Direction::RIGHT},
+		                                    {{-1, 0}, Direction::LEFT}};
 		std::shuffle(directions.begin(), directions.end(), randomGen);
 		for (const auto &direction: directions)
 			dfs.push({startPosition + direction, direction.direction});
-	}
-	while (!dfs.empty()) {
-		const tempaaaa pos = dfs.top(); dfs.pop();
-		if (pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1) continue;
-		if (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top)) continue;
-		switch (pos.direction) {
-			case Direction::UP:
-				maze[pos.y+1][pos.x].top = false;
-				break;
-			case Direction::DOWN:
-				maze[pos.y][pos.x].top = false;
-				break;
-			case Direction::LEFT:
-				maze[pos.y][pos.x+1].left = false;
-				break;
-			case Direction::RIGHT:
-				maze[pos.y][pos.x].left = false;
-				break;
-			default:;
-		}
-		std::shuffle(directions.begin(), directions.end(), randomGen);
-		for (const auto &direction: directions)
-			dfs.push({pos + direction, direction.direction});
-	}
 
-	do {
-		mazeExit = {distX(randomGen), distY(randomGen) };
-	} while (startPosition == mazeExit);
+		std::size_t r = 0;
+		while (r != dfs.size()) {
+			tempaaaa pos = dfs.top();
+			if ((pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1)
+				|| (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top))) {
+				dfs.pop();
+				continue;
+			}
+			r = dfs.size();
+			switch (pos.direction) {
+				case Direction::UP:
+					maze[pos.y+1][pos.x].top = false;
+					break;
+				case Direction::DOWN:
+					maze[pos.y][pos.x].top = false;
+					break;
+				case Direction::LEFT:
+					maze[pos.y][pos.x+1].left = false;
+					break;
+				case Direction::RIGHT:
+					maze[pos.y][pos.x].left = false;
+					break;
+				default:;
+			}
+			std::shuffle(directions.begin(), directions.end(), randomGen);
+			for (const auto &direction: directions)
+				dfs.push({pos + direction, direction.direction});
+		}
+		assert(!dfs.empty());
+		mazeExit = static_cast<sf::Vector2i>(dfs.top());
+		dfs.pop();
+		while (!dfs.empty()) {
+			tempaaaa pos = dfs.top();
+			dfs.pop();
+			if ((pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1)
+			    || (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top))) {
+				continue;
+			}
+			switch (pos.direction) {
+				case Direction::UP:
+					maze[pos.y+1][pos.x].top = false;
+					break;
+				case Direction::DOWN:
+					maze[pos.y][pos.x].top = false;
+					break;
+				case Direction::LEFT:
+					maze[pos.y][pos.x+1].left = false;
+					break;
+				case Direction::RIGHT:
+					maze[pos.y][pos.x].left = false;
+					break;
+				default:;
+			}
+			std::shuffle(directions.begin(), directions.end(), randomGen);
+			for (const auto &direction: directions)
+				dfs.push({pos + direction, direction.direction});
+		}
+	}
 	std::uniform_int_distribution distBlockAlpha(70, 230);
 	std::uniform_int_distribution distWall(0, 10);
 	for (int y = 0; y < mazeSize.y; ++y) {
@@ -166,19 +195,14 @@ void Game::render() {
 }
 
 void Game::renderShadowByFace(sf::Vector2f a, sf::Vector2f b, sf::Color color) {
-	//a d
-	//b c
 	sf::Vector2f c = b*10.f;
 	sf::Vector2f d = a*10.f;
 	sf::ConvexShape s(4);
-//	s.setFillColor(sf::Color(255,255,0,100));
 	s.setFillColor(color);
 	s.setPoint(0, a);
 	s.setPoint(1, b);
 	s.setPoint(2, c);
 	s.setPoint(3, d);
-//	sf::Vertex v[] = {{a, sf::Color::Cyan}, {b,sf::Color::Cyan}};
-//	window.draw(v, 2, sf::Lines);
 	window.draw(s);
 }
 
@@ -187,7 +211,7 @@ void Game::renderMazeBlock(const int x, const int y, const sf::Vector2f& offset,
 	if (!(maze[y][x].top || maze[y][x].left)) return;
 	const sf::Vector2i& playerPos = player.getPosition();
 	const sf::Vector2f p = sf::Vector2f{mazeBlockSize.x * (static_cast<float>(x - playerPos.x) + offset.x),
-	                                    mazeBlockSize.y * (static_cast<float>(y - playerPos.y) + offset.y)} - mazeBlockSize / 2.f + sf::Vector2f{.5f, .5f};
+	                                    mazeBlockSize.y * (static_cast<float>(y - playerPos.y) + offset.y)} - mazeBlockSize / 2.f;// + sf::Vector2f{.5f, .5f};
 	if (maze[y][x].top) renderShadowByFace(p+mazeBlockShape.getPoint(0), p+mazeBlockShape.getPoint(1), sf::Color::Black);
 	if (maze[y][x].left) renderShadowByFace(p+mazeBlockShape.getPoint(0), p+mazeBlockShape.getPoint(3), sf::Color::Black);
 }
