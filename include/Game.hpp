@@ -8,9 +8,10 @@
 #include <random>
 #include <array>
 class Game final {
+	static int c;
 	std::random_device randomDevice;
 	std::mt19937 randomGen{randomDevice()};
-	sf::RenderWindow window { sf::VideoMode(800, 600), "simpleMaze", sf::Style::Close };
+	sf::RenderWindow window;
 	sf::Clock clock;
 	sf::Clock timer;
 	Player player;
@@ -18,6 +19,7 @@ class Game final {
 	std::vector<std::vector<MazeBlock>> maze;
 	sf::Vector2i mazeExit;
 	std::vector<std::vector<sf::Color>> mazeBlockColor;
+	sf::Shader vignetteShader;
 	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
 	float rotation;
 	void initializeMaze();
@@ -32,5 +34,4 @@ public:
 	void render();
 
 };
-
 #endif

@@ -9,12 +9,28 @@
 Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
-		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)){
+		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
+		window(sf::VideoMode(800, 600), "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY), sf::Style::Close),
+		rotation(0.f){
 	initializeWindow();
 	initializeMaze();
-	rotation = 0.f;
 	clock.restart();
 	timer.restart();
+	if (sf::Shader::isAvailable()) {
+		vignetteShader.loadFromMemory("uniform float time;\n"
+		                           "uniform vec2 resolution;\n"
+		                           "uniform vec4 color;\n"
+		                           "uniform vec2 windowSize;\n"
+		                           "\n"
+		                           "void main()\n"
+		                           "{\n"
+		                           "//gl_FragColor = vec4(vec,sin(time*100.0)+1.01);\n"
+								   "gl_FragColor = color;\n"
+		                           "gl_FragColor.a = (sin(time*40.0) + length(windowSize/2.0 - gl_FragCoord.xy))/300.0;\n"
+		                           "gl_FragColor.a = (sin(time*40.0) + length(windowSize/2.0 - gl_FragCoord.xy))/300.0;\n"
+		                           "}", sf::Shader::Fragment);
+
+	}
 }
 
 void Game::initializeWindow() {
@@ -26,15 +42,19 @@ void Game::initializeWindow() {
 }
 
 void Game::initializeMaze() {
+	for (std::vector<MazeBlock>& t : maze)
+			std::fill(t.begin(), t.end(), MazeBlock{true, true});
+
+
 
 	std::uniform_int_distribution distY(0, mazeSize.y - 2);
 	std::uniform_int_distribution distX(0, mazeSize.x - 2);
 	const sf::Vector2i startPosition {distX(randomGen), distY(randomGen)};
 	player.setPosition(startPosition);
-	struct tempaaaa : sf::Vector2i {
-		Direction direction; // from
-	};
 	{
+		struct tempaaaa : sf::Vector2i {
+			Direction direction; // from
+		};
 		std::stack<tempaaaa> dfs;
 		std::vector<tempaaaa> directions = {{{0, -1}, Direction::UP},
 		                                    {{0, 1}, Direction::DOWN},
@@ -144,18 +164,10 @@ void Game::update() {
 	const float dt = clock.restart().asSeconds();
 	handleWindowEvents();
 	if (player.update(dt, keyPressed, maze, mazeExit)) {
-		std::cout << timer.getElapsedTime().asSeconds() << std::endl;
+		std::cout << "simpleMaze " << mazeSize.x << 'x' << mazeSize.y << " completed in " << timer.getElapsedTime().asSeconds() << " seconds" << std::endl;
 		window.close();
 		return;
 	}
-//	std::uniform_int_distribution rotate(1, 1000);x
-//	std::uniform_real_distribution<float> rotateGen(0, 360);
-//	rotation = rotate(randomGen) == 1 ? rotateGen(randomGen) : rotation;
-
-//	if (keyPressed[sf::Keyboard::LBracket])
-//		rotation -= dt*100;
-//	else if (keyPressed[sf::Keyboard::RBracket])
-//		rotation += dt*100;
 }
 
 void Game::render() {
@@ -186,10 +198,23 @@ void Game::render() {
 		}
 	}
 	std::uniform_real_distribution dist(440.f, 450.f);
-	const Vignette vignette({0, 0}, 0, dist(randomGen), 500);
+//	const Vignette vignette({0, 0}, 0, dist(randomGen), 500);
 //	const Vignette vignette({0, 0}, 0, 400, 500);
-	if (!keyPressed[sf::Keyboard::M]) window.draw(vignette);
+//	if (!keyPressed[sf::Keyboard::M]) window.draw(vignette);
 	window.draw(player);
+
+	sf::RectangleShape b(window.getView().getSize());
+	b.setPosition(-window.getView().getSize()/2.f);
+	b.setFillColor(sf::Color::Black);
+
+
+	vignetteShader.setUniform("time", timer.getElapsedTime().asSeconds());
+	vignetteShader.setUniform("windowSize", static_cast<sf::Vector2f>(window.getSize()));
+	if (!keyPressed[sf::Keyboard::M]) window.draw(b, &vignetteShader);
+
+
+
+
 
 	window.display();
 }

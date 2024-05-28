@@ -8,7 +8,7 @@ void Vignette::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 		shape.setOrigin(r, r);
 		const sf::Uint8 alpha = r > darkestRadius ? 255 : static_cast<sf::Uint8>(255 * r / darkestRadius);
 		shape.setOutlineColor(sf::Color(0, 0, 0, alpha));
-		target.draw(shape);
+		target.draw(shape, states);
 	}
 }
 
