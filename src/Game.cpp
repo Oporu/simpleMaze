@@ -9,7 +9,7 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
 		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
-		window(sf::VideoMode(800, 600), "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY), sf::Style::Close),
+		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY), sf::Style::Close),
 		rotation(0.f){
 	initializeWindow();
 	initializeMaze();
@@ -34,12 +34,11 @@ void Game::initializeWindow() {
 //	window.setFramerateLimit(60);
 	window.setVerticalSyncEnabled(true);
 	window.setKeyRepeatEnabled(false);
-	window.setActive(true);
 }
 
 void Game::initializeMaze() {
 	for (std::vector<MazeBlock>& t : maze)
-			std::fill(t.begin(), t.end(), MazeBlock{true, true});
+		std::fill(t.begin(), t.end(), MazeBlock{true, true});
 
 
 
@@ -48,21 +47,21 @@ void Game::initializeMaze() {
 	const sf::Vector2i startPosition {distX(randomGen), distY(randomGen)};
 	player.setPosition(startPosition);
 	{
-		struct tempaaaa : sf::Vector2i {
+		struct posWithDirection : sf::Vector2i {
 			Direction direction; // from
 		};
-		std::stack<tempaaaa> dfs;
-		std::vector<tempaaaa> directions = {{{0, -1}, Direction::UP},
-		                                    {{0, 1}, Direction::DOWN},
-		                                    {{1, 0}, Direction::RIGHT},
-		                                    {{-1, 0}, Direction::LEFT}};
+		std::stack<posWithDirection> dfs;
+		std::vector<posWithDirection> directions = {{{0,  -1}, Direction::UP},
+		                                            {{0,  1},  Direction::DOWN},
+		                                            {{1,  0},  Direction::RIGHT},
+		                                            {{-1, 0},  Direction::LEFT}};
 		std::shuffle(directions.begin(), directions.end(), randomGen);
 		for (const auto &direction: directions)
 			dfs.push({startPosition + direction, direction.direction});
 
 		std::size_t r = 0;
 		while (r != dfs.size()) {
-			tempaaaa pos = dfs.top();
+			posWithDirection pos = dfs.top();
 			if ((pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1)
 				|| (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top))) {
 				dfs.pop();
@@ -92,7 +91,7 @@ void Game::initializeMaze() {
 		mazeExit = static_cast<sf::Vector2i>(dfs.top());
 		dfs.pop();
 		while (!dfs.empty()) {
-			tempaaaa pos = dfs.top();
+			posWithDirection pos = dfs.top();
 			dfs.pop();
 			if ((pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1)
 			    || (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top))) {

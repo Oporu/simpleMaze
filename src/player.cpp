@@ -14,10 +14,6 @@ void Player::setPosition(const sf::Vector2i &_position) {
 	position = _position;
 }
 
-bool Player::moving() const {
-	return isMoving;
-}
-
 bool Player::update(const float dt, const std::array<bool, sf::Keyboard::Key::KeyCount>& keyPressed, const std::vector<std::vector<MazeBlock>>& maze, const sf::Vector2i& mazeExit) {
 	if (!isMoving) {
 		targetPosition = position;

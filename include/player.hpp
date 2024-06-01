@@ -15,7 +15,6 @@ class Player final : public sf::Drawable {
 public:
 	explicit Player();
 	void setPosition(const sf::Vector2i& _position);
-	bool moving() const;
 	sf::Vector2f getMovingOffset() const;
 	const sf::Vector2i& getPosition() const;
 	bool update(float dt, const std::array<bool, sf::Keyboard::Key::KeyCount>& keyPressed, const std::vector<std::vector<MazeBlock>>& maze, const sf::Vector2i& mazeExit);
