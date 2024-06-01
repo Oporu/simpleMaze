@@ -1,6 +1,5 @@
 
 #include "../include/Game.hpp"
-#include "../include/Vignette.hpp"
 #include "../include/Direction.hpp"
 #include <stack>
 #include <algorithm>
@@ -17,17 +16,14 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 	clock.restart();
 	timer.restart();
 	if (sf::Shader::isAvailable()) {
-		vignetteShader.loadFromMemory("uniform float time;\n"
-		                           "uniform vec2 resolution;\n"
+		vignetteShader.loadFromMemory("uniform float time;"
 		                           "uniform vec4 color;\n"
-		                           "uniform vec2 windowSize;\n"
+		                           "uniform vec2 center;\n"
 		                           "\n"
 		                           "void main()\n"
 		                           "{\n"
-		                           "//gl_FragColor = vec4(vec,sin(time*100.0)+1.01);\n"
-								   "gl_FragColor = color;\n"
-		                           "gl_FragColor.a = (sin(time*40.0) + length(windowSize/2.0 - gl_FragCoord.xy))/300.0;\n"
-		                           "gl_FragColor.a = (sin(time*40.0) + length(windowSize/2.0 - gl_FragCoord.xy))/300.0;\n"
+								   "gl_FragColor.rgb = color.rgb;\n"
+								   "gl_FragColor.a = (sin(time*40.0) + length(center - gl_FragCoord.xy)-100.0)/200.0;\n"
 		                           "}", sf::Shader::Fragment);
 
 	}
@@ -177,12 +173,13 @@ void Game::render() {
 	const sf::Vector2f mazeBlockSize {100, 100};
 	const sf::Vector2i& playerPos = player.getPosition();
 	sf::RectangleShape mazeBlockShape {mazeBlockSize};
-	mazeBlockShape.setRotation(rotation);
 	const sf::Vector2f offset = player.getMovingOffset();
 	const int lx = std::max(0, playerPos.x - 4);
 	const int rx = std::min(mazeSize.x-1, playerPos.x + 4);
 	const int ly = std::max(0, playerPos.y - 4);
 	const int ry = std::min(mazeSize.y-1, playerPos.y + 4);
+
+	// render floor
 	for (int y = ly; y <= ry; ++y) {
 		for (int x = lx; x <= rx; ++x) {
 			mazeBlockShape.setOrigin(-sf::Vector2f{mazeBlockSize.x * (static_cast<float>(x - playerPos.x) + offset.x),
@@ -192,25 +189,20 @@ void Game::render() {
 		}
 	}
 
+	// render shadow of wall
 	for (int y = ly; y <= ry; ++y) {
 		for (int x = lx; x <= rx; ++x) {
-			renderMazeBlock(x, y, offset, mazeBlockSize, mazeBlockShape);
+			renderMazeBlockShadows(x, y, offset, mazeBlockSize, mazeBlockShape);
 		}
 	}
-	std::uniform_real_distribution dist(440.f, 450.f);
-//	const Vignette vignette({0, 0}, 0, dist(randomGen), 500);
-//	const Vignette vignette({0, 0}, 0, 400, 500);
-//	if (!keyPressed[sf::Keyboard::M]) window.draw(vignette);
 	window.draw(player);
 
-	sf::RectangleShape b(window.getView().getSize());
-	b.setPosition(-window.getView().getSize()/2.f);
-	b.setFillColor(sf::Color::Black);
-
-
+	sf::RectangleShape vignette(window.getView().getSize());
+	vignette.setPosition(-window.getView().getSize()/2.f);
+	vignette.setFillColor(sf::Color::Black);
 	vignetteShader.setUniform("time", timer.getElapsedTime().asSeconds());
-	vignetteShader.setUniform("windowSize", static_cast<sf::Vector2f>(window.getSize()));
-	if (!keyPressed[sf::Keyboard::M]) window.draw(b, &vignetteShader);
+	vignetteShader.setUniform("center", static_cast<sf::Vector2f>(window.getSize())/2.f);
+	if (!keyPressed[sf::Keyboard::M]) window.draw(vignette, &vignetteShader);
 
 
 
@@ -231,7 +223,7 @@ void Game::renderShadowByFace(sf::Vector2f a, sf::Vector2f b, sf::Color color) {
 	window.draw(s);
 }
 
-void Game::renderMazeBlock(const int x, const int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape) {
+void Game::renderMazeBlockShadows(const int x, const int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape) {
 	if (x < 0 || y < 0 || x >= mazeSize.x || y >= mazeSize.y) return;
 	if (!(maze[y][x].top || maze[y][x].left)) return;
 	const sf::Vector2i& playerPos = player.getPosition();

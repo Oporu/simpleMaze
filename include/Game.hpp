@@ -8,7 +8,6 @@
 #include <random>
 #include <array>
 class Game final {
-	static int c;
 	std::random_device randomDevice;
 	std::mt19937 randomGen{randomDevice()};
 	sf::RenderWindow window;
@@ -25,7 +24,7 @@ class Game final {
 	void initializeMaze();
 	void initializeWindow();
 	void handleWindowEvents();
-	void renderMazeBlock(int x, int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape);
+	void renderMazeBlockShadows(int x, int y, const sf::Vector2f& offset, const sf::Vector2f& mazeBlockSize, const sf::RectangleShape& mazeBlockShape);
 	void renderShadowByFace(sf::Vector2f a, sf::Vector2f b, sf::Color color=sf::Color(255,255,255,255));
 public:
 	explicit Game(int mazeSizeX = 10, int mazeSizeY = 10);
