@@ -9,8 +9,7 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
 		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
-		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY), sf::Style::Close),
-		rotation(0.f){
+		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY), sf::Style::Close) {
 	initializeWindow();
 	initializeMaze();
 	clock.restart();
@@ -46,10 +45,11 @@ void Game::initializeMaze() {
 	std::uniform_int_distribution distX(0, mazeSize.x - 2);
 	const sf::Vector2i startPosition {distX(randomGen), distY(randomGen)};
 	player.setPosition(startPosition);
+	struct posWithDirection : sf::Vector2i {
+		Direction direction; // from
+	};
 	{
-		struct posWithDirection : sf::Vector2i {
-			Direction direction; // from
-		};
+
 		std::stack<posWithDirection> dfs;
 		std::vector<posWithDirection> directions = {{{0,  -1}, Direction::UP},
 		                                            {{0,  1},  Direction::DOWN},
@@ -59,37 +59,6 @@ void Game::initializeMaze() {
 		for (const auto &direction: directions)
 			dfs.push({startPosition + direction, direction.direction});
 
-		std::size_t r = 0;
-		while (r != dfs.size()) {
-			posWithDirection pos = dfs.top();
-			if ((pos.x < 0 || pos.x >= mazeSize.x-1 || pos.y < 0 || pos.y >= mazeSize.y-1)
-				|| (!(maze[pos.y][pos.x].left && maze[pos.y][pos.x].top && maze[pos.y][pos.x+1].left && maze[pos.y+1][pos.x].top))) {
-				dfs.pop();
-				continue;
-			}
-			r = dfs.size();
-			switch (pos.direction) {
-				case Direction::UP:
-					maze[pos.y+1][pos.x].top = false;
-					break;
-				case Direction::DOWN:
-					maze[pos.y][pos.x].top = false;
-					break;
-				case Direction::LEFT:
-					maze[pos.y][pos.x+1].left = false;
-					break;
-				case Direction::RIGHT:
-					maze[pos.y][pos.x].left = false;
-					break;
-				default:;
-			}
-			std::shuffle(directions.begin(), directions.end(), randomGen);
-			for (const auto &direction: directions)
-				dfs.push({pos + direction, direction.direction});
-		}
-		assert(!dfs.empty());
-		mazeExit = static_cast<sf::Vector2i>(dfs.top());
-		dfs.pop();
 		while (!dfs.empty()) {
 			posWithDirection pos = dfs.top();
 			dfs.pop();
@@ -116,6 +85,46 @@ void Game::initializeMaze() {
 			for (const auto &direction: directions)
 				dfs.push({pos + direction, direction.direction});
 		}
+		// possibly stuck here forever
+		std::vector<sf::Vector2i> d;
+		std::vector<std::vector<bool>> been(mazeSize.y, std::vector<bool>(mazeSize.x, false));
+
+		do {
+			for (auto &item: been)
+				std::fill(item.begin(), item.end(), false);
+			d.clear();
+
+			mazeExit.x = distX(randomGen);
+			mazeExit.y = distY(randomGen);
+			been[mazeExit.y][mazeExit.x] = true;
+			while (true) {
+				d.clear();
+				int wallCount = 4;
+				if (!maze[mazeExit.y][mazeExit.x].top) {
+					wallCount--;
+					d.emplace_back(0, -1);
+				}
+				if (!maze[mazeExit.y][mazeExit.x].left) {
+					wallCount--;
+					d.emplace_back(-1, 0);
+				}
+				if (!maze[mazeExit.y + 1][mazeExit.x].top) {
+					wallCount--;
+					d.emplace_back(0, 1);
+				}
+				if (!maze[mazeExit.y][mazeExit.x + 1].left) {
+					wallCount--;
+					d.emplace_back(1, 0);
+				}
+				if (wallCount >= 3) break;
+				std::shuffle(d.begin(), d.end(), randomGen);
+				for (const sf::Vector2i i : d) {
+					if (been[mazeExit.y + i.y][mazeExit.x + i.x]) continue;
+					mazeExit += i;
+					break;
+				}
+			}
+		} while (mazeExit == player.getPosition());
 	}
 	std::uniform_int_distribution distBlockAlpha(70, 230);
 	std::uniform_int_distribution distWall(0, 10);

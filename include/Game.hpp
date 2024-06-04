@@ -8,8 +8,7 @@
 #include <random>
 #include <array>
 class Game final {
-	std::random_device randomDevice;
-	std::mt19937 randomGen{randomDevice()};
+	std::mt19937 randomGen{std::random_device()()};
 	sf::RenderWindow window;
 	sf::Clock clock;
 	sf::Clock timer;
@@ -20,7 +19,6 @@ class Game final {
 	std::vector<std::vector<sf::Color>> mazeBlockColor;
 	sf::Shader vignetteShader;
 	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
-	float rotation;
 	void initializeMaze();
 	void initializeWindow();
 	void handleWindowEvents();
