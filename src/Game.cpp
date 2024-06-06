@@ -1,6 +1,7 @@
 
 #include "../include/Game.hpp"
 #include "../include/Direction.hpp"
+#include "SFML/Audio/Music.hpp"
 #include <stack>
 #include <algorithm>
 #include <iostream>
@@ -25,6 +26,8 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 								   "gl_FragColor.a = (sin(time*40.0) + length(center - gl_FragCoord.xy)-100.0)/200.0;\n"
 		                           "}", sf::Shader::Fragment);
 
+	} else {
+		std::cout << "shader not available!" << std::endl;
 	}
 }
 
