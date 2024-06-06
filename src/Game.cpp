@@ -87,16 +87,13 @@ void Game::initializeMaze() {
 		}
 		// possibly stuck here forever
 		std::vector<sf::Vector2i> d;
-		std::vector<std::vector<bool>> been(mazeSize.y, std::vector<bool>(mazeSize.x, false));
 
 		do {
-			for (auto &item: been)
-				std::fill(item.begin(), item.end(), false);
 			d.clear();
 
 			mazeExit.x = distX(randomGen);
 			mazeExit.y = distY(randomGen);
-			been[mazeExit.y][mazeExit.x] = true;
+			sf::Vector2i last = mazeExit;
 			while (true) {
 				d.clear();
 				int wallCount = 4;
@@ -119,7 +116,7 @@ void Game::initializeMaze() {
 				if (wallCount >= 3) break;
 				std::shuffle(d.begin(), d.end(), randomGen);
 				for (const sf::Vector2i i : d) {
-					if (been[mazeExit.y + i.y][mazeExit.x + i.x]) continue;
+					if ((mazeExit + i) == last) continue;
 					mazeExit += i;
 					break;
 				}
