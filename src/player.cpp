@@ -18,19 +18,23 @@ void Player::setPosition(const sf::Vector2i &_position) {
 	position = _position;
 }
 
-bool Player::update(const float dt, const std::array<bool, sf::Keyboard::Key::KeyCount>& keyPressed, const std::vector<std::vector<MazeBlock>>& maze, const sf::Vector2i& mazeExit) {
+bool Player::update(const float dt, const std::array<bool, sf::Keyboard::Key::KeyCount> &keyPressed,
+                    const std::vector<std::vector<MazeBlock>> &maze, const sf::Vector2i &mazeExit) {
 	if (!m_isMoving) {
 		targetPosition = position;
 		if ((keyPressed[sf::Keyboard::W] || keyPressed[sf::Keyboard::Up]) && !maze[position.y][position.x].top) {
 			--targetPosition.y;
 			m_isMoving = true;
-		} else if ((keyPressed[sf::Keyboard::A] || keyPressed[sf::Keyboard::Left]) && !maze[position.y][position.x].left) {
+		} else if ((keyPressed[sf::Keyboard::A] || keyPressed[sf::Keyboard::Left]) &&
+		           !maze[position.y][position.x].left) {
 			--targetPosition.x;
 			m_isMoving = true;
-		} else if ((keyPressed[sf::Keyboard::S] || keyPressed[sf::Keyboard::Down]) && !maze[position.y+1][position.x].top) {
+		} else if ((keyPressed[sf::Keyboard::S] || keyPressed[sf::Keyboard::Down]) &&
+		           !maze[position.y + 1][position.x].top) {
 			++targetPosition.y;
 			m_isMoving = true;
-		} else if ((keyPressed[sf::Keyboard::D] || keyPressed[sf::Keyboard::Right]) && !maze[position.y][position.x+1].left) {
+		} else if ((keyPressed[sf::Keyboard::D] || keyPressed[sf::Keyboard::Right]) &&
+		           !maze[position.y][position.x + 1].left) {
 			++targetPosition.x;
 			m_isMoving = true;
 		}

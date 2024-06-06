@@ -6,7 +6,7 @@
 #include "MazeBlock.hpp"
 
 class Player final : public sf::Drawable {
-	inline static const float startMoveTime = 5.0f;
+	inline static const float startMoveTime = 0.2f;
 	sf::CircleShape shape;
 	sf::Vector2i position;
 	sf::Vector2i targetPosition;
@@ -14,11 +14,21 @@ class Player final : public sf::Drawable {
 	bool m_isMoving = false;
 public:
 	explicit Player();
-	void setPosition(const sf::Vector2i& _position);
+
+	void setPosition(const sf::Vector2i &_position);
+
 	sf::Vector2f getMovingOffset() const;
-	const sf::Vector2i& getPosition() const;
-	bool update(float dt, const std::array<bool, sf::Keyboard::Key::KeyCount>& keyPressed, const std::vector<std::vector<MazeBlock>>& maze, const sf::Vector2i& mazeExit);
+
+	const sf::Vector2i &getPosition() const;
+
+	/*
+	 * returns true if player is at exit
+	 */
+	bool update(float dt, const std::array<bool, sf::Keyboard::Key::KeyCount> &keyPressed,
+	            const std::vector<std::vector<MazeBlock>> &maze, const sf::Vector2i &mazeExit);
+
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
 	bool isMoving() const;
 };
 

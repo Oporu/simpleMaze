@@ -13,7 +13,7 @@ void Vignette::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }
 
 Vignette::Vignette(const sf::Vector2f &center, const float radius, const float darkestRadius, const float endRadius)
-	: radius(radius), darkestRadius(darkestRadius), endRadius(endRadius) {
+		: radius(radius), darkestRadius(darkestRadius), endRadius(endRadius) {
 	shape.setPosition(center);
 	shape.setFillColor(sf::Color::Transparent);
 	shape.setOutlineThickness(1);
