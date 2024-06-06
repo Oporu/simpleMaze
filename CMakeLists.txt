@@ -13,14 +13,8 @@ FetchContent_MakeAvailable(SFML)
 add_executable(${PROJECT_NAME} src/main.cpp
 		src/Game.cpp
 		src/player.cpp
-<<<<<<< HEAD
-		src/Vignette.cpp
-		include/Direction.hpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio)
-=======
 		src/Vignette.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
->>>>>>> 45e50d44db3de773de78017c64de08183259f2a2
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 if(WIN32)
