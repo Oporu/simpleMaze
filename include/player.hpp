@@ -6,12 +6,12 @@
 #include "MazeBlock.hpp"
 
 class Player final : public sf::Drawable {
-	inline static const float startMoveTime = 0.2f;
+	inline static const float startMoveTime = 5.0f;
 	sf::CircleShape shape;
 	sf::Vector2i position;
 	sf::Vector2i targetPosition;
 	float moveTime = 0;
-	bool isMoving = false;
+	bool m_isMoving = false;
 public:
 	explicit Player();
 	void setPosition(const sf::Vector2i& _position);
@@ -19,6 +19,7 @@ public:
 	const sf::Vector2i& getPosition() const;
 	bool update(float dt, const std::array<bool, sf::Keyboard::Key::KeyCount>& keyPressed, const std::vector<std::vector<MazeBlock>>& maze, const sf::Vector2i& mazeExit);
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+	bool isMoving() const;
 };
 
 

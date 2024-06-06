@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <iostream>
 #include <cassert>
+#include <thread>
+
 Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
@@ -15,6 +17,7 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 	initializeMaze();
 	clock.restart();
 	timer.restart();
+	initializeBgMusic();
 	if (sf::Shader::isAvailable()) {
 		vignetteShader.loadFromMemory("uniform float time;"
 		                           "uniform vec4 color;\n"
@@ -36,6 +39,21 @@ void Game::initializeWindow() {
 //	window.setFramerateLimit(60);
 	window.setVerticalSyncEnabled(true);
 	window.setKeyRepeatEnabled(false);
+}
+void Game::initializeBgMusic() {
+	if (!music.openFromFile("./bg.mp3"))
+		std::cout<<"you don't have premium";
+	else {
+		music.setVolume(3.6f);
+		music.play();
+	}
+	if(MCbuffer.loadFromFile("./walk.mp3")) {
+		sound.setBuffer(MCbuffer);
+		sound.setPitch(2.5f);
+		sound.setLoop(true);
+		std::cout<<"you don't have premium";
+	}
+
 }
 
 void Game::initializeMaze() {
@@ -169,8 +187,25 @@ void Game::update() {
 	handleWindowEvents();
 	if (player.update(dt, keyPressed, maze, mazeExit)) {
 		std::cout << "simpleMaze " << mazeSize.x << 'x' << mazeSize.y << " completed in " << timer.getElapsedTime().asSeconds() << " seconds" << std::endl;
+
+		sound.stop();
+		if (!music.openFromFile("./win.mp3"))
+			std::cout<<"you don't have premium";
+		music.play();
+		for (int i = 0; i < 10; ++i) {
+			sf::RenderWindow windowa(sf::VideoMode{700, 0}, "winnnn11!1");
+			std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		}
 		window.close();
+
 		return;
+	}
+	if(player.isMoving()) {
+		if (sound.getStatus() == sf::SoundSource::Paused || sound.getStatus() == sf::SoundSource::Stopped) {
+			sound.play();
+		}
+	} else if (sound.getStatus() == sf::SoundSource::Playing) {
+		sound.pause();
 	}
 }
 

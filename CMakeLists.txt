@@ -14,7 +14,7 @@ add_executable(${PROJECT_NAME} src/main.cpp
 		src/Game.cpp
 		src/player.cpp
 		src/Vignette.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 if(WIN32)
