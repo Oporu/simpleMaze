@@ -5,5 +5,4 @@ struct MazeBlock {
 };
 
 
-
 #endif //SIMPLEMAZE_MAZEBLOCK_HPP

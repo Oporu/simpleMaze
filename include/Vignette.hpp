@@ -8,7 +8,8 @@ class Vignette final : public sf::Drawable {
 	const float radius, darkestRadius, endRadius;
 	mutable sf::CircleShape shape;
 public:
-	Vignette(const sf::Vector2f& center, float radius, float darkestRadius, float endRadius);
+	Vignette(const sf::Vector2f &center, float radius, float darkestRadius, float endRadius);
+
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };
 
