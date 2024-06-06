@@ -7,6 +7,9 @@
 #include "Direction.hpp"
 #include <random>
 #include <array>
+
+#include <SFML/Audio.hpp>
+
 class Game final {
 	std::mt19937 randomGen{std::random_device()()};
 	sf::RenderWindow window;
@@ -19,6 +22,10 @@ class Game final {
 	std::vector<std::vector<sf::Color>> mazeBlockColor;
 	sf::Shader vignetteShader;
 	std::array<bool, sf::Keyboard::Key::KeyCount> keyPressed {false};
+	sf::Sound sound;
+	sf::Music music;
+	sf::SoundBuffer MCbuffer;
+	void initializeBgMusic();
 	void initializeMaze();
 	void initializeWindow();
 	void handleWindowEvents();
