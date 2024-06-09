@@ -13,7 +13,7 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
 		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
 		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY),
-		       sf::Style::Close) {
+		       sf::Style::Close, sf::ContextSettings{0,0,8,1, 1}) {
 	initializeWindow();
 	initializeMaze();
 	initializeAudioStuff();
