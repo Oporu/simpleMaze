@@ -11,6 +11,16 @@
 
 
 class Game final {
+public:
+	explicit Game(int mazeSizeX = 10, int mazeSizeY = 10);
+
+	bool isActive() const;
+
+	void update();
+
+	void render();
+private:
+	constexpr static float viewSizeRatio = 4.f/3.f;
 	std::mt19937 randomGen{std::random_device()()};
 	sf::RenderWindow window;
 	sf::Clock clock;
@@ -34,19 +44,14 @@ class Game final {
 
 	void handleWindowEvents();
 
+	void updateView();
+
 	void renderMazeBlockShadows(int x, int y, const sf::Vector2f &offset, const sf::Vector2f &mazeBlockSize,
 	                            const sf::RectangleShape &mazeBlockShape);
 
 	void renderShadowByFace(sf::Vector2f a, sf::Vector2f b, sf::Color color = sf::Color(255, 255, 255, 255));
 
-public:
-	explicit Game(int mazeSizeX = 10, int mazeSizeY = 10);
 
-	bool isActive() const;
-
-	void update();
-
-	void render();
 
 };
 

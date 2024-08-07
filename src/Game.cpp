@@ -13,7 +13,7 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
 		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
 		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY),
-		       sf::Style::Close, sf::ContextSettings{0,0,8,1, 1}) {
+		       sf::Style::Default, sf::ContextSettings{0,0,8,1, 1}) {
 	initializeWindow();
 	initializeMaze();
 	initializeAudioStuff();
@@ -23,11 +23,12 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		vignetteShader.loadFromMemory("uniform float time;"
 		                              "uniform vec4 color;\n"
 		                              "uniform vec2 center;\n"
+		                              "uniform float viewSizeWindowSizeRatio;\n"
 		                              "\n"
 		                              "void main()\n"
 		                              "{\n"
 		                              "gl_FragColor.rgb = color.rgb;\n"
-		                              "gl_FragColor.a = (sin(time*40.0) + length(center - gl_FragCoord.xy)-100.0)/200.0;\n"
+		                              "gl_FragColor.a = (sin(time*40.0) + (viewSizeWindowSizeRatio * length(center - gl_FragCoord.xy))-100.0)/200.0;\n"
 		                              "}", sf::Shader::Fragment);
 
 	} else {
@@ -36,9 +37,8 @@ Game::Game(const int mazeSizeX, const int mazeSizeY) :
 }
 
 void Game::initializeWindow() {
-	window.setView({{0, 0}, static_cast<sf::Vector2f>(window.getSize())});
+	updateView();
 	window.setFramerateLimit(60);
-
 	window.setVerticalSyncEnabled(true);
 	window.setKeyRepeatEnabled(false);
 }
@@ -172,9 +172,14 @@ void Game::handleWindowEvents() {
 					window.close();
 					return;
 				}
+				if (event.key.code == sf::Keyboard::F11) {
+				}
 				break;
 			case Event::KeyReleased:
 				keyPressed[event.key.code] = false;
+				break;
+			case Event::Resized:
+				updateView();
 				break;
 			default:;
 		}
@@ -248,8 +253,10 @@ void Game::render() {
 	sf::RectangleShape vignette(window.getView().getSize());
 	vignette.setPosition(-window.getView().getSize() / 2.f);
 	vignette.setFillColor(sf::Color::Black);
+	float viewSizeWindowSizeRatio = window.getView().getSize().x / static_cast<float>(window.getSize().x);
 	vignetteShader.setUniform("time", timer.getElapsedTime().asSeconds());
 	vignetteShader.setUniform("center", static_cast<sf::Vector2f>(window.getSize()) / 2.f);
+	vignetteShader.setUniform("viewSizeWindowSizeRatio", viewSizeWindowSizeRatio);
 	if (!keyPressed[sf::Keyboard::M]) window.draw(vignette, &vignetteShader);
 
 
@@ -281,4 +288,18 @@ Game::renderMazeBlockShadows(const int x, const int y, const sf::Vector2f &offse
 		renderShadowByFace(p + mazeBlockShape.getPoint(0), p + mazeBlockShape.getPoint(1), sf::Color::Black);
 	if (maze[y][x].left)
 		renderShadowByFace(p + mazeBlockShape.getPoint(0), p + mazeBlockShape.getPoint(3), sf::Color::Black);
+}
+
+void Game::updateView() {
+	sf::Vector2f windowSize = static_cast<sf::Vector2f>(window.getSize());
+	float windowSizeRatio = windowSize.x / windowSize.y;
+	sf::Vector2f viewSize;
+	if (windowSize.y * viewSizeRatio > windowSize.x) {
+		viewSize.x = 600 * windowSizeRatio;
+		viewSize.y = 600;
+	} else {
+		viewSize.x = 800;
+		viewSize.y = 800 / windowSizeRatio;
+	}
+	window.setView({{0, 0}, viewSize});
 }
