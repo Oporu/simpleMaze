@@ -44,19 +44,13 @@ void Game::initializeWindow() {
 }
 
 void Game::initializeAudioStuff() {
-	if (!music.openFromFile("./bg.mp3"))
-		std::cout << "you don't have premium";
-	else {
-		music.setVolume(3.6f);
-		music.play();
-	}
-	if (MCBuffer.loadFromFile("./walk.mp3")) {
-		walkingSound.setBuffer(MCBuffer);
-		walkingSound.setPitch(2.5f);
-		walkingSound.setLoop(true);
-		std::cout << "you don't have premium";
-	}
-
+	music.openFromFile("./bg.mp3");
+	music.setVolume(3.6f);
+	music.play();
+	MCBuffer.loadFromFile("./walk.mp3");
+	walkingSound.setBuffer(MCBuffer);
+	walkingSound.setPitch(2.5f);
+	walkingSound.setLoop(true);
 }
 
 void Game::initializeMaze() {
