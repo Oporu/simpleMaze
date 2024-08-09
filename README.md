@@ -1,8 +1,14 @@
 # simpleMaze
 made using SFML
+# build
 
-# OST
-### put those file near binary
+```
+cmake -B build
+cmake --build build
+```
+
+# assets
+put those file near binary
 ```
 bg.mp3
 win.mp3
