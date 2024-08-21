@@ -1,4 +1,4 @@
-#include "../include/Vignette.hpp"
+#include "Vignette.hpp"
 
 void Vignette::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 	float r = radius;

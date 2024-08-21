@@ -21,6 +21,7 @@ else()
 	message("done, SFML source directory = ${SFML_SOURCE_DIR}")
 endif()
 
+include_directories(include)
 add_executable(${PROJECT_NAME} src/main.cpp
 		src/Game.cpp
 		src/player.cpp

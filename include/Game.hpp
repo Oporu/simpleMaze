@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <random>
 #include <array>
+#include <vector>
 #include "player.hpp"
 #include "MazeBlock.hpp"
 #include "Direction.hpp"

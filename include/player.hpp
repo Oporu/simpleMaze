@@ -6,7 +6,7 @@
 #include "MazeBlock.hpp"
 
 class Player final : public sf::Drawable {
-	inline static const float startMoveTime = 0.2f;
+	static constexpr float startMoveTime = 0.2f;
 	sf::CircleShape shape;
 	sf::Vector2i position;
 	sf::Vector2i targetPosition;

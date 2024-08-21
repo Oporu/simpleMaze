@@ -1,7 +1,6 @@
-
-#include "../include/Game.hpp"
-#include "../include/Direction.hpp"
-#include "SFML/Audio/Music.hpp"
+#include "Game.hpp"
+#include "Direction.hpp"
+#include <SFML/Audio/Music.hpp>
 #include <stack>
 #include <algorithm>
 #include <iostream>
@@ -10,8 +9,8 @@
 
 Game::Game(const int mazeSizeX, const int mazeSizeY) :
 		mazeSize(mazeSizeX, mazeSizeY),
-		maze(mazeSizeY, std::vector(mazeSizeX, MazeBlock{true, true})),
-		mazeBlockColor(mazeSizeY, std::vector(mazeSizeX, sf::Color::White)),
+		maze(mazeSizeY, std::vector<MazeBlock>(mazeSizeX, MazeBlock{true, true})),
+		mazeBlockColor(mazeSizeY, std::vector<sf::Color>(mazeSizeX, sf::Color::White)),
 		window(sf::VideoMode{800, 600}, "simpleMaze " + std::to_string(mazeSizeX) + 'x' + std::to_string(mazeSizeY),
 		       sf::Style::Default, sf::ContextSettings{0,0,8,1, 1}) {
 	initializeWindow();

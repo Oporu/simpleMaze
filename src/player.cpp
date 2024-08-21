@@ -1,4 +1,4 @@
-#include "../include/player.hpp"
+#include "player.hpp"
 
 Player::Player() : shape(30) {
 	shape.setPosition(0, 0);
